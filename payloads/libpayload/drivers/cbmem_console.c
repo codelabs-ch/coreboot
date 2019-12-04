@@ -39,7 +39,7 @@ struct cbmem_console {
 #define CURSOR_MASK ((1 << 28) - 1)
 #define OVERFLOW (1 << 31)
 
-static struct cbmem_console *cbmem_console_p;
+static uintptr_t cbmem_console_p;
 
 static struct console_output_driver cbmem_console_driver =
 {
@@ -48,27 +48,32 @@ static struct console_output_driver cbmem_console_driver =
 
 static void do_write(const void *buffer, size_t count)
 {
-	memcpy(cbmem_console_p->body + (cbmem_console_p->cursor & CURSOR_MASK),
-	       buffer, count);
-	cbmem_console_p->cursor += count;
+	struct cbmem_console *const cbmem_con = phys_to_virt(cbmem_console_p);
+
+	memcpy(cbmem_con->body + (cbmem_con->cursor & CURSOR_MASK), buffer, count);
+	cbmem_con->cursor += count;
 }
 
 void cbmem_console_init(void)
 {
-	cbmem_console_p = lib_sysinfo.cbmem_cons;
-	if (cbmem_console_p && cbmem_console_p->size)
+	/* We might have been called before relocation (like FILO does). So
+	   just keep the physical address which won't break on relocation. */
+	cbmem_console_p = virt_to_phys(lib_sysinfo.cbmem_cons);
+
+	struct cbmem_console *const cbmem_con = phys_to_virt(cbmem_console_p);
+	if (cbmem_console_p && cbmem_con->size)
 		console_add_output_driver(&cbmem_console_driver);
 }
 
 void cbmem_console_write(const void *buffer, size_t count)
 {
-	while ((cbmem_console_p->cursor & CURSOR_MASK) + count >=
-	       cbmem_console_p->size) {
-		size_t still_fits = cbmem_console_p->size -
-				    (cbmem_console_p->cursor & CURSOR_MASK);
+	struct cbmem_console *const cbmem_con = phys_to_virt(cbmem_console_p);
+
+	while ((cbmem_con->cursor & CURSOR_MASK) + count >= cbmem_con->size) {
+		size_t still_fits = cbmem_con->size - (cbmem_con->cursor & CURSOR_MASK);
 		do_write(buffer, still_fits);
-		cbmem_console_p->cursor &= ~CURSOR_MASK;
-		cbmem_console_p->cursor |= OVERFLOW;
+		cbmem_con->cursor &= ~CURSOR_MASK;
+		cbmem_con->cursor |= OVERFLOW;
 		buffer += still_fits;
 		count -= still_fits;
 	}
