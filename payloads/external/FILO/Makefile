@@ -1,9 +1,9 @@
-TAG-$(CONFIG_FILO_MASTER)=origin/master
-NAME-$(CONFIG_FILO_MASTER)=MASTER
+TAG-$(CONFIG_FILO_MASTER)=origin/csl
+NAME-$(CONFIG_FILO_MASTER)=CSL
 TAG-$(CONFIG_FILO_STABLE)=22baa6bde9339029edfafa421b3d4a7be159edad
 NAME-$(CONFIG_FILO_STABLE)=STABLE
 
-project_git_repo=https://review.coreboot.org/filo.git
+project_git_repo=https://github.com/codelabs-ch/filo.git
 project_dir=filo
 
 unexport KCONFIG_AUTOHEADER
@@ -33,6 +33,9 @@ config: libpayload
 	#echo "CONFIG_VGAHOOKS=y" >> filo/.config
 	# This shows how to force a previously set .config option *off*
 	#echo "# CONFIG_SMBIOS is not set" >> filo/.config
+	echo 'CONFIG_MENULST_FILE="hda0:/boot/filo/menu.lst"' >> filo/.config
+	echo CONFIG_LIBPAYLOAD_STORAGE=y >>filo/.config
+	echo CONFIG_CSL_BOOT=y >>filo/.config
 	$(MAKE) -C filo oldconfig LIBCONFIG_PATH=../../../libpayload
 
 filo: config
