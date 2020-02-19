@@ -1,9 +1,9 @@
-TAG-$(CONFIG_FILO_HEAD)=origin/main
-NAME-$(CONFIG_FILO_HEAD)=MAIN
+TAG-$(CONFIG_FILO_HEAD)=origin/bsbsc-csl-24.02
+NAME-$(CONFIG_FILO_HEAD)=bsbsc-csl
 TAG-$(CONFIG_FILO_STABLE)=c2fa1ea6125c63e84cdf7779c37d76da8c5bc412
 NAME-$(CONFIG_FILO_STABLE)=STABLE
 
-project_git_repo=https://review.coreboot.org/filo.git
+project_git_repo=https://github.com/codelabs-ch/filo.git
 project_dir=filo
 
 unexport KCONFIG_AUTOHEADER
@@ -40,6 +40,11 @@ ifeq ($(CONFIG_FILO_USE_AUTOBOOT),y)
 	echo "CONFIG_AUTOBOOT_DELAY=$(CONFIG_FILO_AUTOBOOT_DELAY)" >> filo/.config
 endif
 
+	echo 'CONFIG_MENULST_FILE="hda0:/boot/filo/menu.lst"' >> filo/.config
+	echo CONFIG_LIBPAYLOAD_STORAGE=y >> filo/.config
+	echo CONFIG_CSL_BOOT=y >> filo/.config
+	echo CONFIG_FSYS_CBFS=n >> filo/.config
+	#echo CONFIG_DEBUG_ALL=y >> filo/.config
 	$(MAKE) -C filo oldconfig LIBCONFIG_PATH=../../../libpayload
 
 filo: config
