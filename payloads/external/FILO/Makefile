@@ -42,7 +42,7 @@ filo: config
 	echo "    MAKE       FILO $(NAME-y)"
 	$(MAKE) -C filo LIBCONFIG_PATH=../../../libpayload
 
-libpayload: checkout
+libpayload:
 	cd ../../libpayload && $(MAKE) defconfig && \
 		$(MAKE) && $(MAKE) DESTDIR=../external/FILO/filo/build install
 
