@@ -33,9 +33,10 @@ config: libpayload
 	#echo "CONFIG_VGAHOOKS=y" >> filo/.config
 	# This shows how to force a previously set .config option *off*
 	#echo "# CONFIG_SMBIOS is not set" >> filo/.config
-	echo 'CONFIG_MENULST_FILE="hda0:/boot/filo/menu.lst"' >> filo/.config
+	echo 'CONFIG_MENULST_FILE="hda1:/menu.lst"' >> filo/.config
 	echo CONFIG_LIBPAYLOAD_STORAGE=y >> filo/.config
 	echo CONFIG_CSL_BOOT=y >> filo/.config
+	#echo CONFIG_DEBUG_ALL=y >> filo/.config
 	$(MAKE) -C filo oldconfig LIBCONFIG_PATH=../../../libpayload
 
 filo: config
