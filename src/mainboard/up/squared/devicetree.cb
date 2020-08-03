@@ -11,7 +11,7 @@ chip soc/intel/apollolake
 		device pci 00.2 off end	# - NPK
 		device pci 02.0 on end	# - Gen
 		device pci 03.0 off end	# - Iunit
-		device pci 0d.0 off end	# - P2SB
+		device pci 0d.0 on end	# - P2SB
 		device pci 0d.1 off end	# - PMC
 		device pci 0d.2 off end	# - SPI
 		device pci 0d.3 off end	# - Shared SRAM
